@@ -5,6 +5,7 @@
 
 # Exclude NanoVDB files
 *.nvdb
+*.nvdb.meta
 
 /[Ll]ibrary/
 /[Tt]emp/

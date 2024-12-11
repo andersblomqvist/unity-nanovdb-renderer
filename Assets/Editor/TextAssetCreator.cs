@@ -12,23 +12,11 @@ public class TextAssetCreator : Editor
     [MenuItem("Assets/Create/Text Asset/Text File")]
     public static void CreateTextFile() => CreateAsset("NewTextFile.txt");
 
-    [MenuItem("Assets/Create/Text Asset/HTML File")]
-    public static void CreateHTMLFile() => CreateAsset("NewHTMLFile.html");
-
-    [MenuItem("Assets/Create/Text Asset/HTM File")]
-    public static void CreateHTMFile() => CreateAsset("NewHTMFile.htm");
-
-    [MenuItem("Assets/Create/Text Asset/XML File")]
-    public static void CreateXMLFile() => CreateAsset("NewXMLFile.xml");
+    [MenuItem("Assets/Create/Text Asset/HLSL File")]
+    public static void CreateHLSLFile() => CreateAsset("Shader.hlsl");
 
     [MenuItem("Assets/Create/Text Asset/JSON File")]
     public static void CreateJSONFile() => CreateAsset("NewJSONFile.json");
-
-    [MenuItem("Assets/Create/Text Asset/CSV File")]
-    public static void CreateCSVFile() => CreateAsset("NewCSVFile.csv");
-
-    [MenuItem("Assets/Create/Text Asset/YAML File")]
-    public static void CreateYAMLFile() => CreateAsset("NewYAMLFile.yaml");
 
     private static void CreateAsset(string filename)
     {

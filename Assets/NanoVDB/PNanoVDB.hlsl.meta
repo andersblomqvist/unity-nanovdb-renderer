@@ -6,7 +6,7 @@ PluginImporter:
   iconMap: {}
   executionOrder: {}
   defineConstraints: []
-  isPreloaded: 1
+  isPreloaded: 0
   isOverridable: 0
   isExplicitlyReferenced: 0
   validateReferences: 1
@@ -28,19 +28,19 @@ PluginImporter:
     Linux64:
       enabled: 1
       settings:
-        CPU: x86_64
+        CPU: AnyCPU
     OSXUniversal:
       enabled: 1
       settings:
-        CPU: None
+        CPU: AnyCPU
     Win:
       enabled: 1
       settings:
-        CPU: x86
+        CPU: AnyCPU
     Win64:
       enabled: 1
       settings:
-        CPU: None
+        CPU: AnyCPU
   userData: 
   assetBundleName: 
   assetBundleVariant: 

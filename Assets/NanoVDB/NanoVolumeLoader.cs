@@ -33,7 +33,6 @@ public class NanoVolumeLoader : MonoBehaviour
             int bufferSize = (int)nanoVolume->elementCount;
             int stride = (int)nanoVolume->structStride;
 
-            Debug.Log("Creating buffer with length: " + bufferSize);
             buf = new uint[bufferSize];
 
             // Go through each element in nanoVolume buf and copy it to the buf array

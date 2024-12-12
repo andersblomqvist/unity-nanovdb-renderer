@@ -35,16 +35,15 @@ public class FullscreenNanoVolumePass : MonoBehaviour
         mat = nanoVDBPass.fullscreenPassMaterial;
 
         nanoVolumeLoader = GetComponent<NanoVolumeLoader>();
-        mat.SetBuffer("buf", nanoVolumeLoader.GetGPUBuffer());
-        mat.SetFloat("_ClipPlaneMin", 1f);
-        mat.SetFloat("_ClipPlaneMax", 2000.0f);
-
         vdbNameText.text = nanoVolumeLoader.volumePath;
     }
 
     private void Update()
     {
-        mat.SetVector("_CameraPos", Camera.main.transform.position);
+        mat.SetBuffer("buf", nanoVolumeLoader.GetGPUBuffer());
+        mat.SetFloat("_ClipPlaneMin", 1f);
+        mat.SetFloat("_ClipPlaneMax", 2000.0f);
+
         mat.SetVector("_LightDir", directionalLight.transform.forward);
 
         mat.SetFloat("_DensityScale", DensitySlider.value);

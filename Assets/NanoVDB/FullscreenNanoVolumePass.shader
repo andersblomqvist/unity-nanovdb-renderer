@@ -10,16 +10,14 @@ Shader "FullScreen/NanoVolumePass"
     #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/RenderPass/CustomPass/CustomPassCommon.hlsl"
     #include "Assets/NanoVDB/NanoVolumePass.hlsl"
 
-    uniform float3 _CameraPos;
-
     float4 FullScreenPass(Varyings varyings) : SV_Target
     {
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(varyings);
         float depth = LoadCameraDepth(varyings.positionCS.xy);
         PositionInputs posInput = GetPositionInput(varyings.positionCS.xy, _ScreenSize.zw, depth, UNITY_MATRIX_I_VP, UNITY_MATRIX_V);
-        float3 viewDirection = -GetWorldSpaceNormalizeViewDir(posInput.positionWS);
+        float3 viewDirection = GetWorldSpaceNormalizeViewDir(posInput.positionWS);
 
-        float4 color = NanoVolumePass(_CameraPos, viewDirection);
+        float4 color = NanoVolumePass(_WorldSpaceCameraPos, -viewDirection);
 
         return float4(color.rgb, color.a);
     }

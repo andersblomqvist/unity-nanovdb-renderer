@@ -2,8 +2,9 @@
 #define NANO_VOLUME_PASS
 
 #define MIN_TRANSMITTANCE   0.05
-#define MIN_DENSITY         0.001
+#define MIN_DENSITY         0.01
 #define CLOUD_COLOR         float3(1, 1, 1)
+#define SHADOW_COLOR        float3(0.1, 0.1, 0.1)
 
 #define COLOR_NONE		    float4(0, 0, 0, 0)
 #define COLOR_RED           float4(1, 0, 0, 1)
@@ -25,9 +26,6 @@ uniform float	_ClipPlaneMax;
 
 uniform int		_RayMarchSamples;
 uniform int		_LightSamples;
-
-// for debugging
-uniform float	_Threshold;
 
 struct Ray
 {
@@ -135,6 +133,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume)
     float transmittance = 1;
     float3 light_energy = 0;
 
+    // Voxel size is 0.41667
     float step_size = 1;
     int step = 0;
     while (step < _RayMarchSamples)
@@ -151,10 +150,11 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume)
         // Skip empty space.
         uint dim = get_dim_coord(volume.acc, pos);
         if (d < MIN_DENSITY && dim > 1)
-        {
+        {   
             float not_used;
             bool hit = get_hdda_hit(volume, ray, not_used);
             if (!hit) { break; }
+            step++;
             continue;
         }
 
@@ -162,7 +162,11 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume)
         // but voxel is at the lowest dimension.
         if (d < MIN_DENSITY)
         {
-            ray.tmin += step_size * 2;
+            // +1 in coefficient is +5 FPS in 1080p
+            // But each +1 introduces artifacts.
+            int coeff = 1;
+            ray.tmin += step_size * coeff;
+            step++;
             continue;
         }
 
@@ -194,8 +198,12 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume)
         step++;
         ray.tmin += step_size;
     }
-
     
+    /*if (step >= _RayMarchSamples)
+    {
+        return COLOR_RED;
+    }*/
+
     float3 final_color = saturate(CLOUD_COLOR * transmittance + light_energy) * acc_density;
 
     return float4(final_color, acc_density);

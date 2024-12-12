@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// Whole file written by ChatGPT
 public class ArcballCamera : MonoBehaviour
 {
     public Transform target; // The target object or position (world origin by default)
@@ -8,7 +9,7 @@ public class ArcballCamera : MonoBehaviour
     public float rotationSpeed = 100.0f; // Speed of rotation
     public float panSpeed = 0.5f; // Speed of panning
 
-    private float currentYaw = 0.0f; // Current yaw (horizontal rotation)
+    private float currentYaw = -90.0f; // Current yaw (horizontal rotation)
     private float currentPitch = 0.0f; // Current pitch (vertical rotation)
 
     void Start()
@@ -18,7 +19,7 @@ public class ArcballCamera : MonoBehaviour
         {
             GameObject origin = new GameObject("WorldOrigin");
             target = origin.transform;
-            target.position = Vector3.zero;
+            target.position = new Vector3(-10, 92, -54);
         }
     }
 

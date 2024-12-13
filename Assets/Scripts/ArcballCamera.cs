@@ -81,4 +81,12 @@ public class ArcballCamera : MonoBehaviour
         transform.position = target.position + offset;
         transform.LookAt(target);
     }
+
+    public void ResetCameraPosition()
+    {
+        target.position = new Vector3(-10, 92, -54);
+        currentYaw = -90.0f;
+        currentPitch = 0.0f;
+        distance = 1000.0f;
+    }
 }

@@ -21,6 +21,8 @@ public class FullscreenNanoVolumePass : MonoBehaviour
     public Slider LightSteps;
     public Slider LightAbsorbation;
 
+    private bool visualizeSteps = false;
+
     private void Start()
     {
         customPass = GetComponent<CustomPassVolume>();
@@ -52,5 +54,18 @@ public class FullscreenNanoVolumePass : MonoBehaviour
 
         mat.SetInt("_RayMarchSamples", (int)RaymarchSamples.value);
         mat.SetInt("_LightSamples", (int)LightSteps.value);
+    }
+
+    public void VisualizeSteps()
+    {
+        visualizeSteps = !visualizeSteps;
+        mat.SetInt("_VisualizeSteps", visualizeSteps ? 1 : 0);
+    }
+
+    // When clicking reset button
+    public void StopVisualizeSteps()
+    {
+        visualizeSteps = false;
+        mat.SetInt("_VisualizeSteps", 0);
     }
 }

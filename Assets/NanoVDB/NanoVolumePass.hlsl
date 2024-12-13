@@ -26,6 +26,8 @@ uniform float	_ClipPlaneMax;
 uniform int		_RayMarchSamples;
 uniform int		_LightSamples;
 
+uniform int     _VisualizeSteps;
+
 struct Ray
 {
     float3 origin;
@@ -203,20 +205,20 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         ray.tmin += step_size;
     }
 
-// Uncomment to visualize number of steps
-//#define VIS_STEPS
-#ifdef VIS_STEPS
-    float t = float(step) / float(_RayMarchSamples);
-    if (step <= 0)
+    // Low step count will be blue, high red.
+    if (_VisualizeSteps == 1)
     {
-        return COLOR_NONE;
+        float t = float(step) / float(_RayMarchSamples);
+        if (step <= 0)
+        {
+            return COLOR_NONE;
+        }
+        float3 final_color = lerp(COLOR_BLUE, COLOR_RED, t);
+        return float4(final_color, 1);
     }
-    float3 final_color = lerp(COLOR_BLUE, COLOR_RED, t);
-    return float4(final_color, 1);
-#else
+
     float3 final_color = saturate(CLOUD_COLOR * transmittance + light_energy) * acc_density;
     return float4(final_color, acc_density);
-#endif
 }
 
 float4 NanoVolumePass(float3 origin, float3 direction)

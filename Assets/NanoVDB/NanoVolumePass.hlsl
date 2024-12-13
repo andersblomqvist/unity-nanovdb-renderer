@@ -4,7 +4,6 @@
 #define MIN_TRANSMITTANCE   0.05
 #define MIN_DENSITY         0.01
 #define CLOUD_COLOR         float3(1, 1, 1)
-#define SHADOW_COLOR        float3(0.1, 0.1, 0.1)
 
 #define COLOR_NONE		    float4(0, 0, 0, 0)
 #define COLOR_RED           float4(1, 0, 0, 1)
@@ -85,6 +84,7 @@ bool get_hdda_hit(inout NanoVolume volume, inout Ray ray, inout float valueAtHit
     return hit;
 }
 
+// Not used
 float hdda_light_step(float3 cloud_sample_pos, Ray sun_ray, inout NanoVolume volume)
 {
     if (_LightSamples < 1) { return 0; }
@@ -99,7 +99,7 @@ float hdda_light_step(float3 cloud_sample_pos, Ray sun_ray, inout NanoVolume vol
     return density;
 }
 
-float light_step(float3 pos, inout NanoVolume volume)
+float light_step_exp(float3 pos, inout NanoVolume volume)
 {
     if (_LightSamples < 1) { return 0; }
 
@@ -127,14 +127,12 @@ float beers_Law(float light_density)
     return exp(light_density * -_LightAbsorbation);
 }
 
-float4 raymarch_volume(Ray ray, inout NanoVolume volume)
+float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 {
     float acc_density = 0;
     float transmittance = 1;
-    float3 light_energy = 0;
+    float light_energy = 0;
 
-    // Voxel size is 0.41667
-    float step_size = 1;
     int step = 0;
     while (step < _RayMarchSamples)
     {
@@ -146,6 +144,16 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume)
         // read density from ray position
         float3  pos = ray.origin + ray.direction * ray.tmin;
         float   d   = get_value_coord(volume.acc, pos);
+
+        // interpolate density from some neighbors
+        float   d2  = get_value_coord(volume.acc, pos + float3( 1,  0,  0));
+        float   d3  = get_value_coord(volume.acc, pos + float3(-1,  0,  0));
+        float   d4  = get_value_coord(volume.acc, pos + float3( 0,  1,  0));
+        float   d5  = get_value_coord(volume.acc, pos + float3( 0, -1,  0));
+        float   d6  = get_value_coord(volume.acc, pos + float3( 0,  0,  1));
+        float   d7  = get_value_coord(volume.acc, pos + float3( 0,  0, -1));
+        float avg_d = (d + d2 + d3 + d4 + d5 + d6 + d7) / 7;
+        d = avg_d;
 
         // Skip empty space.
         uint dim = get_dim_coord(volume.acc, pos);
@@ -178,15 +186,11 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume)
             acc_density = 1.0;
             break;
         }
-
-        //sun_ray.origin = pos - sun_ray.direction * _LightRayLength;
-        //sun_ray.tmin = 1;
-        //light_density = hdda_light_step(pos, sun_ray, volume);
         
-        float light_density = light_step(pos, volume);
+        float light_density = light_step_exp(pos, volume);
         float light_transmittance = beers_Law(light_density);
 
-        light_energy += d * transmittance * light_transmittance * step_size;
+        light_energy += d * transmittance * light_transmittance * step_size ;
         transmittance *= exp(-d * step_size);
 
         if (transmittance < MIN_TRANSMITTANCE)
@@ -198,15 +202,21 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume)
         step++;
         ray.tmin += step_size;
     }
-    
-    /*if (step >= _RayMarchSamples)
+
+// Uncomment to visualize number of steps
+//#define VIS_STEPS
+#ifdef VIS_STEPS
+    float t = float(step) / float(_RayMarchSamples);
+    if (step <= 0)
     {
-        return COLOR_RED;
-    }*/
-
+        return COLOR_NONE;
+    }
+    float3 final_color = lerp(COLOR_BLUE, COLOR_RED, t);
+    return float4(final_color, 1);
+#else
     float3 final_color = saturate(CLOUD_COLOR * transmittance + light_energy) * acc_density;
-
     return float4(final_color, acc_density);
+#endif
 }
 
 float4 NanoVolumePass(float3 origin, float3 direction)
@@ -218,14 +228,9 @@ float4 NanoVolumePass(float3 origin, float3 direction)
     ray.direction = direction;
     ray.tmin = _ClipPlaneMin;
     ray.tmax = _ClipPlaneMax;
-
-    //Ray sun_ray;
-    //sun_ray.origin = ray.origin;
-    //sun_ray.direction = _LightDir.xyz;
-    //sun_ray.tmin = 1;
-    //sun_ray.tmax = _LightRayLength;
     
-    float4 final_color = raymarch_volume(ray, volume);
+    float step_size = 1;
+    float4 final_color = raymarch_volume(ray, volume, step_size);
     return float4(final_color);
 }
 

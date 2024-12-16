@@ -838,8 +838,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 954561847}
-        m_TargetAssemblyTypeName: FullscreenNanoVolumePass, Assembly-CSharp
+      - m_Target: {fileID: 954561851}
+        m_TargetAssemblyTypeName: NanoVolumeSettings, Assembly-CSharp
         m_MethodName: StopVisualizeSteps
         m_Mode: 1
         m_Arguments:
@@ -2598,8 +2598,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 954561847}
-        m_TargetAssemblyTypeName: FullscreenNanoVolumePass, Assembly-CSharp
+      - m_Target: {fileID: 954561851}
+        m_TargetAssemblyTypeName: NanoVolumeSettings, Assembly-CSharp
         m_MethodName: VisualizeSteps
         m_Mode: 1
         m_Arguments:
@@ -2926,6 +2926,7 @@ GameObject:
   m_Component:
   - component: {fileID: 954561849}
   - component: {fileID: 954561850}
+  - component: {fileID: 954561851}
   - component: {fileID: 954561848}
   - component: {fileID: 954561847}
   m_Layer: 0
@@ -2947,13 +2948,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dda18800168d974c9b334463f63700c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  directionalLight: {fileID: 1929491561}
-  vdbNameText: {fileID: 1297835915}
-  RaymarchSamples: {fileID: 149716181}
-  DensitySlider: {fileID: 117275966}
-  LightRayLength: {fileID: 1125787910}
-  LightSteps: {fileID: 823567880}
-  LightAbsorbation: {fileID: 585077568}
 --- !u!114 &954561848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2971,6 +2965,7 @@ MonoBehaviour:
   priority: 0
   customPasses:
   - rid: 7199935530744676352
+  - rid: 7199935662877311038
   injectionPoint: 1
   m_TargetCamera: {fileID: 0}
   useTargetCamera: 0
@@ -2980,17 +2975,30 @@ MonoBehaviour:
     - rid: 7199935530744676352
       type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
       data:
-        m_Name: NanoVolumePass
-        enabled: 1
+        m_Name: Nano Volume Pass
+        enabled: 0
         targetColorBuffer: 0
         targetDepthBuffer: 0
         clearFlags: 0
-        passFoldout: 0
+        passFoldout: 1
         m_Version: 0
         fullscreenPassMaterial: {fileID: 2100000, guid: 78c6b92ef73df684fb653b46cda73805, type: 2}
         materialPassIndex: 0
         materialPassName: Custom Pass 0
         fetchColorBuffer: 0
+    - rid: 7199935662877311038
+      type: {class: TemporalNanoVolumePass, ns: , asm: Assembly-CSharp}
+      data:
+        m_Name: Temporal Nano Volume Pass
+        enabled: 1
+        targetColorBuffer: 0
+        targetDepthBuffer: 0
+        clearFlags: 0
+        passFoldout: 1
+        m_Version: 0
+        nanoVolumeLoaderComponent: {fileID: 954561850}
+        nanoVolumeSettings: {fileID: 954561851}
+        volumeShader: {fileID: 4800000, guid: a3e61447f8553dc419567904d4bede14, type: 3}
 --- !u!4 &954561849
 Transform:
   m_ObjectHideFlags: 0
@@ -3019,6 +3027,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   volumePath: Assets/nano_wdas_cloud_half.nvdb
+--- !u!114 &954561851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954561846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04a3f5c1a0e0ba240ae40af9f0fcce17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  directionalLight: {fileID: 1929491561}
+  vdbNameText: {fileID: 1297835915}
+  RaymarchSamples: {fileID: 149716181}
+  DensitySlider: {fileID: 117275966}
+  LightRayLength: {fileID: 1125787910}
+  LightSteps: {fileID: 823567880}
+  LightAbsorbation: {fileID: 585077568}
+  visualizeSteps: 0
 --- !u!1 &980424126
 GameObject:
   m_ObjectHideFlags: 0

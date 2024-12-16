@@ -1,27 +1,18 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(CustomPassVolume))]
 public class FullscreenNanoVolumePass : MonoBehaviour
 {
     private CustomPassVolume customPass;
     private FullScreenCustomPass nanoVDBPass;
+
     private NanoVolumeLoader nanoVolumeLoader;
+    private NanoVolumeSettings nanoVolumeSettings;
 
     private Material mat;
 
-    public Light directionalLight;
-
-    public TMP_Text vdbNameText;
-    public Slider RaymarchSamples;
-    public Slider DensitySlider;
-    public Slider LightRayLength;
-    public Slider LightSteps;
-    public Slider LightAbsorbation;
-
-    private bool visualizeSteps = false;
+    private bool loaded = true;
 
     private void Start()
     {
@@ -34,38 +25,40 @@ public class FullscreenNanoVolumePass : MonoBehaviour
         }
 
         nanoVDBPass = (FullScreenCustomPass)customPass.customPasses[0];
+
+        if (nanoVDBPass.enabled == false)
+        {
+            loaded = false;
+            return;
+        }
+
         mat = nanoVDBPass.fullscreenPassMaterial;
 
         nanoVolumeLoader = GetComponent<NanoVolumeLoader>();
-        vdbNameText.text = nanoVolumeLoader.volumePath;
+        nanoVolumeSettings = GetComponent<NanoVolumeSettings>();
+        nanoVolumeSettings.vdbNameText.text = nanoVolumeLoader.volumePath;
     }
 
     private void Update()
     {
+        if (!loaded)
+        {
+            return;
+        }
+
         mat.SetBuffer("buf", nanoVolumeLoader.GetGPUBuffer());
         mat.SetFloat("_ClipPlaneMin", 1f);
         mat.SetFloat("_ClipPlaneMax", 2000.0f);
 
-        mat.SetVector("_LightDir", directionalLight.transform.forward);
+        mat.SetVector("_LightDir", nanoVolumeSettings.directionalLight.transform.forward);
 
-        mat.SetFloat("_DensityScale", DensitySlider.value);
-        mat.SetFloat("_LightAbsorbation", LightAbsorbation.value);
-        mat.SetFloat("_LightRayLength", LightRayLength.value);
+        mat.SetFloat("_DensityScale", nanoVolumeSettings.DensitySlider.value);
+        mat.SetFloat("_LightAbsorbation", nanoVolumeSettings.LightAbsorbation.value);
+        mat.SetFloat("_LightRayLength", nanoVolumeSettings.LightRayLength.value);
 
-        mat.SetInt("_RayMarchSamples", (int)RaymarchSamples.value);
-        mat.SetInt("_LightSamples", (int)LightSteps.value);
-    }
+        mat.SetInt("_RayMarchSamples", (int)nanoVolumeSettings.RaymarchSamples.value);
+        mat.SetInt("_LightSamples", (int)nanoVolumeSettings.LightSteps.value);
 
-    public void VisualizeSteps()
-    {
-        visualizeSteps = !visualizeSteps;
-        mat.SetInt("_VisualizeSteps", visualizeSteps ? 1 : 0);
-    }
-
-    // When clicking reset button
-    public void StopVisualizeSteps()
-    {
-        visualizeSteps = false;
-        mat.SetInt("_VisualizeSteps", 0);
+        mat.SetInt("_VisualizeSteps", nanoVolumeSettings.visualizeSteps);
     }
 }

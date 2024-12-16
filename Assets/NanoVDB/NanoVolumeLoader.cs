@@ -20,6 +20,7 @@ public class NanoVolumeLoader : MonoBehaviour
     private ComputeBuffer gpuBuffer;
     private uint[] buf;
     private bool ok;
+    private bool loaded = false;
 
     private void Awake()
     {
@@ -49,6 +50,7 @@ public class NanoVolumeLoader : MonoBehaviour
             gpuBuffer.SetData(buf);
 
             Debug.Log("GPU Buffer initialized");
+            loaded = true;
         }
     }
 
@@ -93,6 +95,11 @@ public class NanoVolumeLoader : MonoBehaviour
         }
 
         return gpuBuffer;
+    }
+
+    public bool IsLoaded()
+    {
+        return loaded;
     }
 
     private delegate void DebugLogDelegate(IntPtr message);

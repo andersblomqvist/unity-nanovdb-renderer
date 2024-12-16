@@ -4,6 +4,7 @@
 #
 /.vscode/
 shadertoolsconfig.json
+*.code-workspace
 
 # Exclude NanoVDB files
 *.nvdb

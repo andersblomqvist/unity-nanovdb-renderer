@@ -2994,7 +2994,7 @@ MonoBehaviour:
         targetColorBuffer: 0
         targetDepthBuffer: 0
         clearFlags: 0
-        passFoldout: 1
+        passFoldout: 0
         m_Version: 0
         nanoVolumeLoaderComponent: {fileID: 954561850}
         nanoVolumeSettings: {fileID: 954561851}

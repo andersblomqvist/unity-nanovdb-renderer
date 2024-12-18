@@ -2,13 +2,13 @@
 
 > See `NanoVDBWrapper.cpp` for source code.
 
-The NanoVDB library is imported to Unity through a C++ wrapper. This wrapper exposes three functions, which we use in our Unity script `Assets\NanoVDB\NanoLoader.cs`:
+The NanoVDB library is imported to Unity through a C++ wrapper. This wrapper exposes three functions, which we use in our Unity script [NanoVolumeLoader.cs](https://github.com/andersblomqvist/unity-nanovdb/blob/main/Assets/NanoVDB/NanoVolumeLoader.cs):
 
 * `void SetDebugLogCallback(DebugLogCallback callback)`
 * `void LoadNVDB(const char* str, struct NanoVolume** volume)`
 * `void FreeNVDB(struct NanoVolume* volume)`
 
-The `LoadNVDB` is most important, as it loads a `.nvdb` file from disk and enables Unity to access it through the `NanoVolume` struct. This struct mainly contains a pointer to the VDB grid buffer, which is uploaded to the GPU through the `NanoLoader.cs` script. That is basically it for the wrapper.
+The `LoadNVDB` is most important, as it loads a `.nvdb` file from disk and enables Unity to access it through the `NanoVolume` struct. This struct mainly contains a pointer to the VDB grid buffer, which is uploaded to the GPU through the `NanoVolumeLoader.cs` script. That is basically it for the wrapper.
 
 *Note:* it is not recommended by the author, Ken Museth, to store `.nvdb` files on disk. Instead it is suggested to convert an OpenVDB (`.vdb`) to NanoVDB (`.nvdb`) at runtime, but that requires importing all of OpenVDB. I decided to accept a larger file size on disk instead of bothering to import OpenVDB.
 

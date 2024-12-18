@@ -135,6 +135,10 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
     float transmittance = 1;
     float light_energy = 0;
 
+    float not_used;
+    bool hit = get_hdda_hit(volume, ray, not_used);
+    if (!hit) { return COLOR_NONE; }
+
     int step = 0;
     while (step < _RayMarchSamples)
     {

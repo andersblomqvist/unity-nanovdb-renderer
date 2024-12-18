@@ -7,7 +7,7 @@ class TemporalNanoVolumePass : CustomPass
 {
     const int NANO_VOLUME_PASS_ID    = 0;
     const int TEMPORAL_BLEND_PASS_ID = 1;
-    const int COPY_COLOR_PASS_ID     = 2;
+    const int COPY_HISTORY_PASS_ID   = 2;
 
     public NanoVolumeLoader     nanoVolumeLoaderComponent;
     public NanoVolumeSettings   nanoVolumeSettings;
@@ -40,8 +40,7 @@ class TemporalNanoVolumePass : CustomPass
         );
 
         frameHistory = RTHandles.Alloc(
-            Vector2.one,
-            slices: temporalFrames,
+            Vector2.one, TextureXR.slices,
             colorFormat: GraphicsFormat.R16G16B16A16_SFloat, 
             dimension: TextureXR.dimension,
             name: "Frame_History_Buffer"
@@ -72,16 +71,14 @@ class TemporalNanoVolumePass : CustomPass
 
         // Combine new frame with old frames into another buffer
         ctx.propertyBlock.SetTexture("_NextFrame", nextFrame);
-        
-        ctx.propertyBlock.SetInt("_FrameIndex", N);
         ctx.propertyBlock.SetTexture("_FrameHistory", frameHistory);
         CoreUtils.SetRenderTarget(ctx.cmd, blendedFrame, ClearFlag.Color);
         CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: TEMPORAL_BLEND_PASS_ID);
 
         // Save blended frame to history at slice frameIndex
         ctx.propertyBlock.SetTexture("_BlendedFrame", blendedFrame);
-        CoreUtils.SetRenderTarget(ctx.cmd, frameHistory, ClearFlag.Color, depthSlice: N);
-        CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: COPY_COLOR_PASS_ID);
+        CoreUtils.SetRenderTarget(ctx.cmd, frameHistory, ClearFlag.Color);
+        CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: COPY_HISTORY_PASS_ID);
         
         // Display blended frame to camera
         ctx.cmd.Blit(blendedFrame, ctx.cameraColorBuffer, new Vector2(scale.x, scale.y), Vector2.zero, 0, 0);
@@ -113,5 +110,11 @@ class TemporalNanoVolumePass : CustomPass
         mat.SetInt("_LightSamples", (int)nanoVolumeSettings.LightSteps.value);
 
         mat.SetInt("_VisualizeSteps", nanoVolumeSettings.visualizeSteps);
+
+        mat.SetFloat("_Alpha", 0.05f);
+
+        // Generate random between 0 and 1
+        float r = Random.value;
+        mat.SetFloat("_Offset", r);
     }
 }

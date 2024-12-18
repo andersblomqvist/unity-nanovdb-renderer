@@ -28,6 +28,9 @@ uniform int		_LightSamples;
 
 uniform int     _VisualizeSteps;
 
+// For Temporal pass
+uniform float    _Offset;
+
 struct Ray
 {
     float3 origin;
@@ -138,6 +141,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
     float not_used;
     bool hit = get_hdda_hit(volume, ray, not_used);
     if (!hit) { return COLOR_NONE; }
+    ray.tmin += step_size;
 
     int step = 0;
     while (step < _RayMarchSamples)
@@ -169,6 +173,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
             bool hit = get_hdda_hit(volume, ray, not_used);
             if (!hit) { break; }
             step++;
+            ray.tmin += step_size;
             continue;
         }
 
@@ -178,7 +183,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         {
             // +1 in coefficient is +5 FPS in 1080p
             // But each +1 introduces artifacts.
-            int coeff = 1;
+            int coeff = 3;
             ray.tmin += step_size * coeff;
             step++;
             continue;
@@ -192,7 +197,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
             acc_density = 1.0;
             break;
         }
-        
+
         float light_density = light_step_exp(pos, volume);
         float light_transmittance = beers_Law(light_density);
 
@@ -235,7 +240,7 @@ float4 NanoVolumePass(float3 origin, float3 direction)
     ray.tmin = _ClipPlaneMin;
     ray.tmax = _ClipPlaneMax;
     
-    float step_size = 1;
+    float step_size = 1 + _Offset;
     float4 final_color = raymarch_volume(ray, volume, step_size);
     return float4(final_color);
 }

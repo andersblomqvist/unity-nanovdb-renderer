@@ -2998,6 +2998,7 @@ MonoBehaviour:
         m_Version: 0
         nanoVolumeLoaderComponent: {fileID: 954561850}
         nanoVolumeSettings: {fileID: 954561851}
+        temporalFrames: 4
         volumeShader: {fileID: 4800000, guid: a3e61447f8553dc419567904d4bede14, type: 3}
 --- !u!4 &954561849
 Transform:

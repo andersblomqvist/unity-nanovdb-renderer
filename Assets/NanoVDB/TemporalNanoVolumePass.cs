@@ -7,6 +7,7 @@ class TemporalNanoVolumePass : CustomPass
 {
     const int NANO_VOLUME_PASS_ID    = 0;
     const int TEMPORAL_BLEND_PASS_ID = 1;
+    const int COPY_COLOR_PASS_ID     = 2;
 
     public NanoVolumeLoader     nanoVolumeLoaderComponent;
     public NanoVolumeSettings   nanoVolumeSettings;
@@ -18,7 +19,7 @@ class TemporalNanoVolumePass : CustomPass
     RTHandle nextFrame;
     RTHandle frameHistory;
     RTHandle blendedFrame;
-    int      frameIndex;
+    int      N;
 
     // To make sure the shader ends up in the build, we keep a reference to it
     [SerializeField, HideInInspector]
@@ -26,33 +27,31 @@ class TemporalNanoVolumePass : CustomPass
 
     protected override void Setup(ScriptableRenderContext renderContext, CommandBuffer cmd)
     {
-        frameIndex = 0;
+        N = 0;
 
         volumeShader = Shader.Find("FullScreen/TemporalNanoVolumePass");
         mat = CoreUtils.CreateEngineMaterial(volumeShader);
 
         nextFrame = RTHandles.Alloc(
-            Vector2.one, TextureXR.slices, 
+            Vector2.one, TextureXR.slices,
             colorFormat: GraphicsFormat.R16G16B16A16_SFloat, 
-            dimension: TextureXR.dimension, 
-            useDynamicScale: true, 
-            name: "Next Frame Buffer"
+            dimension: TextureXR.dimension,
+            name: "Next_Frame_Buffer"
         );
 
         frameHistory = RTHandles.Alloc(
-            Vector2.one, TextureXR.slices, 
+            Vector2.one,
+            slices: temporalFrames,
             colorFormat: GraphicsFormat.R16G16B16A16_SFloat, 
-            dimension: TextureXR.dimension, 
-            useDynamicScale: true, 
-            name: "Frame History Buffer"
+            dimension: TextureXR.dimension,
+            name: "Frame_History_Buffer"
         );
 
         blendedFrame = RTHandles.Alloc(
             Vector2.one, TextureXR.slices, 
             colorFormat: GraphicsFormat.R16G16B16A16_SFloat, 
             dimension: TextureXR.dimension, 
-            useDynamicScale: true, 
-            name: "Blended Frame Buffer"
+            name: "Blended_Frame_Buffer"
         );
     }
 
@@ -67,25 +66,27 @@ class TemporalNanoVolumePass : CustomPass
 
         SetUniforms();
 
-        // Draw newst frame to buffer
+        // Draw newest frame to a buffer
         CoreUtils.SetRenderTarget(ctx.cmd, nextFrame, ClearFlag.Color);
         CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: NANO_VOLUME_PASS_ID);
 
-        // Insert textures for temporal blend pass
-        ctx.cmd.SetGlobalTexture("_NextFrame", nextFrame);
-        ctx.cmd.SetGlobalTexture("_FrameHistory", frameHistory);
-
-        // Combine new frame with old frames
+        // Combine new frame with old frames into another buffer
+        ctx.propertyBlock.SetTexture("_NextFrame", nextFrame);
+        
+        ctx.propertyBlock.SetInt("_FrameIndex", N);
+        ctx.propertyBlock.SetTexture("_FrameHistory", frameHistory);
         CoreUtils.SetRenderTarget(ctx.cmd, blendedFrame, ClearFlag.Color);
         CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: TEMPORAL_BLEND_PASS_ID);
 
-        // Save blended frame to history
-        ctx.cmd.Blit(blendedFrame, frameHistory, new Vector2(scale.x, scale.y), Vector2.zero, 0, 0);
-
+        // Save blended frame to history at slice frameIndex
+        ctx.propertyBlock.SetTexture("_BlendedFrame", blendedFrame);
+        CoreUtils.SetRenderTarget(ctx.cmd, frameHistory, ClearFlag.Color, depthSlice: N);
+        CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: COPY_COLOR_PASS_ID);
+        
         // Display blended frame to camera
         ctx.cmd.Blit(blendedFrame, ctx.cameraColorBuffer, new Vector2(scale.x, scale.y), Vector2.zero, 0, 0);
 
-        frameIndex = (frameIndex + 1) % temporalFrames;
+        N = (N + 1) % temporalFrames;
     }
 
     protected override void Cleanup()

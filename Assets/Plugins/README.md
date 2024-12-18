@@ -1,6 +1,6 @@
 # Wrapper for NanoVDB to Unity
 
-> See `NanoVDBWrapper.cpp` for source code.
+> See [NanoVDBWrapper.cpp](https://github.com/andersblomqvist/unity-nanovdb/blob/main/Assets/Plugins/NanoVDBWrapper.cpp) for source code.
 
 The NanoVDB library is imported to Unity through a C++ wrapper. This wrapper exposes three functions, which we use in our Unity script [NanoVolumeLoader.cs](https://github.com/andersblomqvist/unity-nanovdb/blob/main/Assets/NanoVDB/NanoVolumeLoader.cs):
 

@@ -52,6 +52,9 @@ public class FullscreenNanoVolumePass : MonoBehaviour
 
         mat.SetVector("_LightDir", nanoVolumeSettings.directionalLight.transform.forward);
 
+        mat.SetVector("_Light", nanoVolumeSettings.directionalLight.color);
+        mat.SetVector("_Scattering", nanoVolumeSettings.scatteringColor);
+
         mat.SetFloat("_DensityScale", nanoVolumeSettings.DensitySlider.value);
         mat.SetFloat("_LightAbsorbation", nanoVolumeSettings.LightAbsorbation.value);
         mat.SetFloat("_LightRayLength", nanoVolumeSettings.LightRayLength.value);

@@ -154,11 +154,11 @@ void scatter_integration(
 
 float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 {
-    float acc_density = 0;
+    float acc_density   = 0;
     float transmittance = 1;
-    float light_energy = 0;
-    float phase = 1;
-    float3 extinction = _Scattering * _LightAbsorbation;
+    float phase         = 1;
+    float3 light_energy = 0;
+    float3 extinction   = _Scattering * _LightAbsorbation;
 
     float not_used;
     bool hit = get_hdda_hit(volume, ray, not_used);
@@ -177,6 +177,21 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         float3  pos = ray.origin + ray.direction * ray.tmin;
         float   d   = get_value_coord(volume.acc, pos);
 
+        // Skip empty space.
+        uint dim = get_dim_coord(volume.acc, pos);
+        if (d < MIN_DENSITY && dim > 1)
+        {
+            step++;
+            ray.tmin += step_size * 3;
+            continue;
+        }
+        if (d < MIN_DENSITY)
+        {
+            step++;
+            ray.tmin += step_size * 3;
+            continue;
+        }
+
         // interpolate density from some neighbors
         float   d2  = get_value_coord(volume.acc, pos + float3( 1,  0,  0));
         float   d3  = get_value_coord(volume.acc, pos + float3(-1,  0,  0));
@@ -186,30 +201,6 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         float   d7  = get_value_coord(volume.acc, pos + float3( 0,  0, -1));
         float avg_d = (d + d2 + d3 + d4 + d5 + d6 + d7) / 7;
         d = avg_d;
-
-        // Skip empty space.
-        uint dim = get_dim_coord(volume.acc, pos);
-        if (d < MIN_DENSITY && dim > 1)
-        {   
-            float not_used;
-            bool hit = get_hdda_hit(volume, ray, not_used);
-            if (!hit) { break; }
-            step++;
-            ray.tmin += step_size;
-            continue;
-        }
-
-        // Fixes artifacts from empty space skip where density is still too low
-        // but voxel is at the lowest dimension.
-        if (d < MIN_DENSITY)
-        {
-            // +1 in coefficient is +5 FPS in 1080p
-            // But each +1 introduces artifacts.
-            int coeff = 5;
-            ray.tmin += step_size * coeff;
-            step++;
-            continue;
-        }
 
         d *= _DensityScale;
         acc_density += d;

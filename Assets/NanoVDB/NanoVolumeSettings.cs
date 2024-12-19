@@ -11,6 +11,7 @@ public class NanoVolumeSettings : MonoBehaviour
     public Slider LightRayLength;
     public Slider LightSteps;
     public Slider LightAbsorbation;
+    public Color scatteringColor;
     public int visualizeSteps = 0;
 
     // Called from UI Button

@@ -17,6 +17,9 @@ uniform pnanovdb_buf_t buf : register(t1);
 
 uniform float4	_LightDir;
 
+uniform float3  _Light;
+uniform float3  _Scattering;
+
 uniform float	_DensityScale;
 uniform float	_LightRayLength;
 uniform float	_LightAbsorbation;
@@ -29,7 +32,7 @@ uniform int		_LightSamples;
 uniform int     _VisualizeSteps;
 
 // For Temporal pass
-uniform float    _Offset;
+uniform float   _Offset;
 
 struct Ray
 {
@@ -126,10 +129,27 @@ float light_step_exp(float3 pos, inout NanoVolume volume)
     return acc_d;
 }
 
-float beers_Law(float light_density)
+float beers_Law(float light_density, float3 extinction)
 {
     if (light_density <= 0) { return 1; }
-    return exp(light_density * -_LightAbsorbation);
+    return exp(-light_density * extinction);
+}
+
+// Hillaire 2015 analytical integration with implementation by Sebastian Gaida
+void scatter_integration(
+    inout float3 scatteredLuminance,
+    inout float3 transmittance,
+    float3 luminance,
+    float3 extinction,
+    float density,
+    float deltaStepSize
+)
+{
+    float3 sampleExtinction = max(float(0.00001), density * extinction);
+    float3 sampleTransmittance = exp(-sampleExtinction * deltaStepSize);
+    float3 scatterIntegration = (luminance - (luminance * sampleTransmittance)) / sampleExtinction;
+    scatteredLuminance += transmittance * scatterIntegration;
+    transmittance *= sampleTransmittance;
 }
 
 float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
@@ -137,6 +157,8 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
     float acc_density = 0;
     float transmittance = 1;
     float light_energy = 0;
+    float phase = 1;
+    float3 extinction = _Scattering * _LightAbsorbation;
 
     float not_used;
     bool hit = get_hdda_hit(volume, ray, not_used);
@@ -183,7 +205,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         {
             // +1 in coefficient is +5 FPS in 1080p
             // But each +1 introduces artifacts.
-            int coeff = 3;
+            int coeff = 5;
             ray.tmin += step_size * coeff;
             step++;
             continue;
@@ -199,10 +221,9 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         }
 
         float light_density = light_step_exp(pos, volume);
-        float light_transmittance = beers_Law(light_density);
-
-        light_energy += d * transmittance * light_transmittance * step_size ;
-        transmittance *= exp(-d * step_size);
+        float light_transmittance = beers_Law(light_density, extinction);
+        float3 luminance = _Light * _Scattering * light_transmittance * phase * d;
+        scatter_integration(light_energy, transmittance, luminance, extinction, d, step_size);
 
         if (transmittance < MIN_TRANSMITTANCE)
         {
@@ -240,7 +261,7 @@ float4 NanoVolumePass(float3 origin, float3 direction)
     ray.tmin = _ClipPlaneMin;
     ray.tmax = _ClipPlaneMax;
     
-    float step_size = 1 + _Offset;
+    float step_size = 0.4 + (_Offset * 10);
     float4 final_color = raymarch_volume(ray, volume, step_size);
     return float4(final_color);
 }

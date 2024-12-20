@@ -12,9 +12,6 @@ class TemporalNanoVolumePass : CustomPass
     public NanoVolumeLoader     nanoVolumeLoaderComponent;
     public NanoVolumeSettings   nanoVolumeSettings;
 
-    [Range(1, 16)]
-    public int temporalFrames = 4;
-
     Material mat;
     RTHandle nextFrame;
     RTHandle frameHistory;
@@ -75,15 +72,17 @@ class TemporalNanoVolumePass : CustomPass
         CoreUtils.SetRenderTarget(ctx.cmd, blendedFrame, ClearFlag.Color);
         CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: TEMPORAL_BLEND_PASS_ID);
 
-        // Save blended frame to history at slice frameIndex
-        ctx.propertyBlock.SetTexture("_BlendedFrame", blendedFrame);
+        // Save new frame to history!
+        ctx.propertyBlock.SetTexture("_BlendedFrame", nextFrame);
+        // --------------------------------------------------
+
         CoreUtils.SetRenderTarget(ctx.cmd, frameHistory, ClearFlag.Color);
         CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: COPY_HISTORY_PASS_ID);
         
         // Display blended frame to camera
         ctx.cmd.Blit(blendedFrame, ctx.cameraColorBuffer, new Vector2(scale.x, scale.y), Vector2.zero, 0, 0);
 
-        N = (N + 1) % temporalFrames;
+        N = (N + 1) % 2;
     }
 
     protected override void Cleanup()
@@ -113,6 +112,8 @@ class TemporalNanoVolumePass : CustomPass
         mat.SetInt("_LightSamples", (int)nanoVolumeSettings.LightSteps.value);
 
         mat.SetInt("_VisualizeSteps", nanoVolumeSettings.visualizeSteps);
+
+        mat.SetInt("_FrameIndex", N);
 
         mat.SetFloat("_Alpha", 0.05f);
 

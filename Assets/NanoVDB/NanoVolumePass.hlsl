@@ -33,6 +33,7 @@ uniform int     _VisualizeSteps;
 
 // For Temporal pass
 uniform float   _Offset;
+uniform int     _FrameIndex;
 
 struct Ray
 {
@@ -163,7 +164,13 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
     float not_used;
     bool hit = get_hdda_hit(volume, ray, not_used);
     if (!hit) { return COLOR_NONE; }
-    ray.tmin += step_size;
+
+    // Every other frame, we start half a step in. Meaning we will hopefully hit
+    // voxels that were missed in the previous frame.
+    if (_FrameIndex == 0)
+    {
+        ray.tmin += step_size / 2;
+    }
 
     int step = 0;
     while (step < _RayMarchSamples)
@@ -182,17 +189,17 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         if (d < MIN_DENSITY && dim > 1)
         {
             step++;
-            ray.tmin += step_size * 3;
+            ray.tmin += step_size * 1;
             continue;
         }
         if (d < MIN_DENSITY)
         {
             step++;
-            ray.tmin += step_size * 3;
+            ray.tmin += step_size * 1;
             continue;
         }
 
-        // interpolate density from some neighbors
+        // "interpolate" density from some neighbors
         float   d2  = get_value_coord(volume.acc, pos + float3( 1,  0,  0));
         float   d3  = get_value_coord(volume.acc, pos + float3(-1,  0,  0));
         float   d4  = get_value_coord(volume.acc, pos + float3( 0,  1,  0));
@@ -205,16 +212,16 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
         d *= _DensityScale;
         acc_density += d;
 
-        if (acc_density > 1.0)
-        {
-            acc_density = 1.0;
-            break;
-        }
-
         float light_density = light_step_exp(pos, volume);
         float light_transmittance = beers_Law(light_density, extinction);
         float3 luminance = _Light * _Scattering * light_transmittance * phase * d;
         scatter_integration(light_energy, transmittance, luminance, extinction, d, step_size);
+
+        // Early out "half way", other half was done in the previous frame.
+        if (acc_density > 0.5)
+        {
+            break;
+        }
 
         if (transmittance < MIN_TRANSMITTANCE)
         {
@@ -252,7 +259,7 @@ float4 NanoVolumePass(float3 origin, float3 direction)
     ray.tmin = _ClipPlaneMin;
     ray.tmax = _ClipPlaneMax;
     
-    float step_size = 0.4 + (_Offset * 10);
+    float step_size = 2;
     float4 final_color = raymarch_volume(ray, volume, step_size);
     return float4(final_color);
 }

@@ -1606,9 +1606,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 227939014}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
+  m_MaxValue: 2
   m_WholeNumbers: 0
-  m_Value: 0.5
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2980,7 +2980,7 @@ MonoBehaviour:
         targetColorBuffer: 0
         targetDepthBuffer: 0
         clearFlags: 0
-        passFoldout: 1
+        passFoldout: 0
         m_Version: 0
         fullscreenPassMaterial: {fileID: 2100000, guid: 78c6b92ef73df684fb653b46cda73805, type: 2}
         materialPassIndex: 0
@@ -2998,7 +2998,6 @@ MonoBehaviour:
         m_Version: 0
         nanoVolumeLoaderComponent: {fileID: 954561850}
         nanoVolumeSettings: {fileID: 954561851}
-        temporalFrames: 4
         volumeShader: {fileID: 4800000, guid: a3e61447f8553dc419567904d4bede14, type: 3}
 --- !u!4 &954561849
 Transform:
@@ -3047,6 +3046,7 @@ MonoBehaviour:
   LightRayLength: {fileID: 1125787910}
   LightSteps: {fileID: 823567880}
   LightAbsorbation: {fileID: 585077568}
+  scatteringColor: {r: 1, g: 1, b: 1, a: 0}
   visualizeSteps: 0
 --- !u!1 &980424126
 GameObject:

@@ -57,7 +57,6 @@ public class FullscreenNanoVolumePass : MonoBehaviour
 
         mat.SetFloat("_DensityScale", nanoVolumeSettings.DensitySlider.value);
         mat.SetFloat("_LightAbsorbation", nanoVolumeSettings.LightAbsorbation.value);
-        mat.SetFloat("_LightRayLength", nanoVolumeSettings.LightRayLength.value);
 
         mat.SetInt("_RayMarchSamples", (int)nanoVolumeSettings.RaymarchSamples.value);
         mat.SetInt("_LightSamples", (int)nanoVolumeSettings.LightSteps.value);

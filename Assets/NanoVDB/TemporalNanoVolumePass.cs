@@ -72,17 +72,15 @@ class TemporalNanoVolumePass : CustomPass
         CoreUtils.SetRenderTarget(ctx.cmd, blendedFrame, ClearFlag.Color);
         CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: TEMPORAL_BLEND_PASS_ID);
 
-        // Save new frame to history!
-        ctx.propertyBlock.SetTexture("_BlendedFrame", nextFrame);
-        // --------------------------------------------------
-
+        // Save final frame to history
+        ctx.propertyBlock.SetTexture("_FinalFrame", blendedFrame);
         CoreUtils.SetRenderTarget(ctx.cmd, frameHistory, ClearFlag.Color);
         CoreUtils.DrawFullScreen(ctx.cmd, mat, ctx.propertyBlock, shaderPassId: COPY_HISTORY_PASS_ID);
         
         // Display blended frame to camera
         ctx.cmd.Blit(blendedFrame, ctx.cameraColorBuffer, new Vector2(scale.x, scale.y), Vector2.zero, 0, 0);
 
-        N = (N + 1) % 2;
+        N = (N + 1) % (int)nanoVolumeSettings.TemporalFrames.value;
     }
 
     protected override void Cleanup()
@@ -96,7 +94,7 @@ class TemporalNanoVolumePass : CustomPass
     void SetUniforms()
     {
         mat.SetBuffer("buf", nanoVolumeLoaderComponent.GetGPUBuffer());
-        mat.SetFloat("_ClipPlaneMin", 1f);
+        mat.SetFloat("_ClipPlaneMin", 0.01f);
         mat.SetFloat("_ClipPlaneMax", 2000.0f);
 
         mat.SetVector("_LightDir", nanoVolumeSettings.directionalLight.transform.forward);
@@ -106,19 +104,13 @@ class TemporalNanoVolumePass : CustomPass
 
         mat.SetFloat("_DensityScale", nanoVolumeSettings.DensitySlider.value);
         mat.SetFloat("_LightAbsorbation", nanoVolumeSettings.LightAbsorbation.value);
-        mat.SetFloat("_LightRayLength", nanoVolumeSettings.LightRayLength.value);
 
         mat.SetInt("_RayMarchSamples", (int)nanoVolumeSettings.RaymarchSamples.value);
         mat.SetInt("_LightSamples", (int)nanoVolumeSettings.LightSteps.value);
 
-        mat.SetInt("_VisualizeSteps", nanoVolumeSettings.visualizeSteps);
-
         mat.SetInt("_FrameIndex", N);
+        mat.SetInt("_TotalFrames", (int)nanoVolumeSettings.TemporalFrames.value);
 
-        mat.SetFloat("_Alpha", 0.05f);
-
-        // Generate random between 0 and 1
-        float r = Random.value;
-        mat.SetFloat("_Offset", r);
+        mat.SetInt("_VisualizeSteps", nanoVolumeSettings.visualizeSteps);
     }
 }

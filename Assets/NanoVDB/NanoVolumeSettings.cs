@@ -7,8 +7,8 @@ public class NanoVolumeSettings : MonoBehaviour
     public Light directionalLight;
     public TMP_Text vdbNameText;
     public Slider RaymarchSamples;
+    public Slider TemporalFrames;
     public Slider DensitySlider;
-    public Slider LightRayLength;
     public Slider LightSteps;
     public Slider LightAbsorbation;
     public Color scatteringColor;

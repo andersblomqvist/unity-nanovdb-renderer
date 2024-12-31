@@ -43,7 +43,7 @@ Shader "FullScreen/TemporalNanoVolumePass"
         return blendedFrame;
     }
 
-    TEXTURE2D_X(_BlendedFrame);
+    TEXTURE2D_X(_FinalFrame);
 
     float4 CopyHistoryPass(Varyings varyings) : SV_Target
     {
@@ -53,7 +53,7 @@ Shader "FullScreen/TemporalNanoVolumePass"
 
         float2 scaling = _RTHandleScale.xy;
         float2 uv = posInput.positionNDC.xy * scaling;
-        float4 color = SAMPLE_TEXTURE2D_X(_BlendedFrame, s_linear_clamp_sampler, uv);
+        float4 color = SAMPLE_TEXTURE2D_X(_FinalFrame, s_linear_clamp_sampler, uv);
 
         return color;
     }

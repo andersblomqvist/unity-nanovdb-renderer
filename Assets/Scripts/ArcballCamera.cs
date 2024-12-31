@@ -87,6 +87,6 @@ public class ArcballCamera : MonoBehaviour
         target.position = new Vector3(-10, 92, -54);
         currentYaw = -90.0f;
         currentPitch = 0.0f;
-        distance = 1000.0f;
+        distance = 730.0f;
     }
 }

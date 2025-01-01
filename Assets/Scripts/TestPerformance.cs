@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class TestPerformance : MonoBehaviour
 {
+    public string groundTruthPath;
+
+    public bool isGroundTruth;
+    public string testName;
+
     float msFrameTime;
     float avgFrameTime;
     float lastAvgFrameTime;
@@ -15,8 +20,7 @@ public class TestPerformance : MonoBehaviour
     bool testing;
 
     StringBuilder fileOutput;
-
-    public string fileName;
+    ImageProcessor imageProcessor;
 
     private void Start()
     {
@@ -31,6 +35,7 @@ public class TestPerformance : MonoBehaviour
         testing = false;
 
         fileOutput = new StringBuilder();
+        imageProcessor = GetComponent<ImageProcessor>();
     }
 
     private void Update()
@@ -53,16 +58,28 @@ public class TestPerformance : MonoBehaviour
             {
                 avgFrameTime /= numberOfTests;
 
-                fileOutput.AppendLine("Avg: " + avgFrameTime);
-                SaveTextFile(fileOutput.ToString(), fileName);
+                fileOutput.AppendLine("Total avgerage of " + avgFrameTime + " ms");
+
+                imageProcessor.SaveFrame(testName);
+
+                if (!isGroundTruth)
+                {
+                    Texture2D groundTruth = imageProcessor.LoadImage(groundTruthPath + ".png");
+                    Texture2D testImage = imageProcessor.LoadImage("Assets/TestOutput/" + testName + ".png");
+
+                    float rmse = imageProcessor.ComputeRMSE(groundTruth, testImage);
+                    fileOutput.AppendLine("RMSE: " + rmse);
+                    Debug.Log("RMSE: " + rmse);
+                }
+
+                SaveTextFile(fileOutput.ToString(), testName);
 
                 // Stop testing and reset all
                 testCounter = 0;
                 avgFrameTime = 0.0f;
                 testing = false;
                 fileOutput.Clear();
-
-                Debug.Log("Performance test: " + fileName + " ended");
+                Debug.Log("Performance test: " + testName + " ended");
             }
         }
     }
@@ -70,22 +87,22 @@ public class TestPerformance : MonoBehaviour
     public void StartTest()
     {
         // start test
-        if (fileName.Length == 0)
+        if (testName.Length == 0)
         {
             Debug.LogError("Filename is empty. Please name the test!");
             return;
         }
-        fileOutput.AppendLine("Performance test: " + fileName);
-        fileOutput.AppendLine("Avg render time in MS over: " + numberOfFrames + " frames");
 
-        Debug.Log("Performance test: " + fileName + " started");
+        fileOutput.AppendLine(testName);
+        fileOutput.AppendLine("Render time in MS");
+
+        Debug.Log("Performance test: " + testName + " started");
         testing = true;
     }
 
     private void SaveTextFile(string text, string fileName)
     {
-        string date = System.DateTime.UtcNow.ToString("HH-mm-dd");
-        string path = "Assets/TestOutput/" + fileName + "-" + date + ".txt";
+        string path = "Assets/TestOutput/" + fileName + ".txt";
         System.IO.File.WriteAllText(path, text);
         AssetDatabase.ImportAsset(path);
 

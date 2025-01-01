@@ -718,9 +718,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1595065643}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 512
+  m_MaxValue: 1000
   m_WholeNumbers: 1
-  m_Value: 256
+  m_Value: 1000
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -762,7 +762,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -1.9724, y: -273.7}
+  m_AnchoredPosition: {x: -1.9724, y: -218}
   m_SizeDelta: {x: 228.9463, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &175090696
@@ -2747,7 +2747,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -1.9724, y: -333.7}
+  m_AnchoredPosition: {x: -1.9724, y: -278}
   m_SizeDelta: {x: 228.9463, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &896009566
@@ -3124,7 +3124,6 @@ GameObject:
   - component: {fileID: 954561850}
   - component: {fileID: 954561851}
   - component: {fileID: 954561848}
-  - component: {fileID: 954561847}
   m_Layer: 0
   m_Name: Volumetric Cloud Pass
   m_TagString: Untagged
@@ -3132,18 +3131,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &954561847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 954561846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dda18800168d974c9b334463f63700c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &954561848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3160,32 +3147,17 @@ MonoBehaviour:
   fadeRadius: 0
   priority: 0
   customPasses:
-  - rid: 7199935530744676352
-  - rid: 7199935662877311038
+  - rid: 5687718711710711870
   injectionPoint: 1
   m_TargetCamera: {fileID: 0}
   useTargetCamera: 0
   references:
     version: 2
     RefIds:
-    - rid: 7199935530744676352
-      type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
+    - rid: 5687718711710711870
+      type: {class: NanoVolumeCustomPass, ns: , asm: Assembly-CSharp}
       data:
         m_Name: Nano Volume Pass
-        enabled: 0
-        targetColorBuffer: 0
-        targetDepthBuffer: 0
-        clearFlags: 0
-        passFoldout: 1
-        m_Version: 0
-        fullscreenPassMaterial: {fileID: 2100000, guid: 78c6b92ef73df684fb653b46cda73805, type: 2}
-        materialPassIndex: 0
-        materialPassName: Custom Pass 0
-        fetchColorBuffer: 0
-    - rid: 7199935662877311038
-      type: {class: TemporalNanoVolumePass, ns: , asm: Assembly-CSharp}
-      data:
-        m_Name: Temporal Nano Volume Pass
         enabled: 1
         targetColorBuffer: 0
         targetDepthBuffer: 0
@@ -3739,8 +3711,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1084948031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.06666667, y: 0}
+  m_AnchorMax: {x: 0.06666667, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3799,7 +3771,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1125787908
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4852,7 +4824,7 @@ RectTransform:
   m_Father: {fileID: 1612577290}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.06666667, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4931,7 +4903,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -1.9724, y: -397}
+  m_AnchoredPosition: {x: -1.9724, y: -341.3}
   m_SizeDelta: {x: 228.9463, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1720312566

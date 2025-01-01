@@ -1652,9 +1652,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 485641237}
+  - component: {fileID: 485641239}
   - component: {fileID: 485641238}
   m_Layer: 0
-  m_Name: Test Performance
+  m_Name: Test Handler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1687,7 +1688,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cacf7b2dbce447b4ba58b28ef999375b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: mstest
+  groundTruthPath: Assets/TestOutput/ground-truth
+  isGroundTruth: 0
+  testName: 2-frames
+--- !u!114 &485641239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 485641236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57fed92458ec07428bc84d2c9cb477b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &538946364
 GameObject:
   m_ObjectHideFlags: 0
@@ -4966,6 +4981,18 @@ MonoBehaviour:
       - m_Target: {fileID: 485641238}
         m_TargetAssemblyTypeName: TestPerformance, Assembly-CSharp
         m_MethodName: StartTest
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1967848835}
+        m_TargetAssemblyTypeName: ArcballCamera, Assembly-CSharp
+        m_MethodName: ResetCameraPosition
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

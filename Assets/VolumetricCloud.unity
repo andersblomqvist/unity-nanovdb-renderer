@@ -1690,7 +1690,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundTruthPath: Assets/TestOutput/ground-truth
   isGroundTruth: 0
-  testName: step_size_x5
+  testName: empty_space_skip_hdda
 --- !u!114 &485641239
 MonoBehaviour:
   m_ObjectHideFlags: 0

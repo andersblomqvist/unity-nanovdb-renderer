@@ -170,7 +170,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 	float sigmaE         = 0.0;
 	float acc_density    = 0.0;
 	float3 direct_light  = 0.0;
-	float3 ambient_light = 0.01;
+	float3 ambient_light = 0.01;	
 
 	float not_used;
 	bool hit = get_hdda_hit(volume.acc, ray, not_used);
@@ -200,7 +200,9 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 		if (sigmaS < MIN_DENSITY)
 		{
 			step++;
-			ray.tmin += step_size;
+			float not_used;
+			bool hit = get_hdda_hit(volume.acc, ray, not_used);
+			if (!hit) { break; }
 			continue;
 		}
 
@@ -255,7 +257,7 @@ float4 NanoVolumePass(float3 origin, float3 direction)
 	ray.tmin = _ClipPlaneMin;
 	ray.tmax = _ClipPlaneMax;
 
-	float step_size = 0.57 * 5;
+	float step_size = 0.57;
 	float4 final_color = raymarch_volume(ray, volume, step_size);
 	return final_color;
 }

@@ -255,7 +255,7 @@ float4 NanoVolumePass(float3 origin, float3 direction)
 	ray.tmin = _ClipPlaneMin;
 	ray.tmax = _ClipPlaneMax;
 
-	float step_size = 0.57 * 4;
+	float step_size = 0.57 * 5;
 	float4 final_color = raymarch_volume(ray, volume, step_size);
 	return final_color;
 }

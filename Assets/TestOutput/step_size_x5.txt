@@ -1,0 +1,26 @@
+step_size_x5
+Render time in MS
+18,5422
+18,6513
+18,5931
+18,5775
+18,5055
+18,4595
+18,5101
+18,5075
+18,6745
+18,5787
+Total avgerage of 18,55999 ms
+RMSE: 0,07514323
+
+Configuration:
+step size			0.57 * 5
+max steps			1000
+light steps			64
+light ray length	650
+min transmitt.		0.05
+min density			0.001
+
+Optimizations:
+HDDA first hit
+density skip

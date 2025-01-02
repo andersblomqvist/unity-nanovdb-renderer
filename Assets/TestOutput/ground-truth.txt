@@ -1,0 +1,25 @@
+ground-truth
+Render time in MS
+40,9974
+40,8017
+41,0622
+41,1366
+41,0347
+40,8545
+40,9768
+41,0664
+40,5625
+41,1771
+Total avgerage of 40,967 ms
+
+Configuration:
+step size			0.57
+max steps			1000
+light steps			64
+light ray length	650
+min transmitt.		0.05
+min density			0.001
+
+Optimizations:
+HDDA first hit
+density skip

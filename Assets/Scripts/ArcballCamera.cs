@@ -9,8 +9,8 @@ public class ArcballCamera : MonoBehaviour
     public float rotationSpeed = 100.0f; // Speed of rotation
     public float panSpeed = 0.5f; // Speed of panning
 
-    private float currentYaw = -90.0f; // Current yaw (horizontal rotation)
-    private float currentPitch = 0.0f; // Current pitch (vertical rotation)
+    private float currentYaw = -92.0f; // Current yaw (horizontal rotation)
+    private float currentPitch = 12.0f; // Current pitch (vertical rotation)
 
     void Start()
     {
@@ -85,8 +85,8 @@ public class ArcballCamera : MonoBehaviour
     public void ResetCameraPosition()
     {
         target.position = new Vector3(-10, 92, -54);
-        currentYaw = -90.0f;
-        currentPitch = 0.0f;
-        distance = 730.0f;
+        currentYaw = -92.0f;
+        currentPitch = 12.0f;
+        distance = 775.0f;
     }
 }

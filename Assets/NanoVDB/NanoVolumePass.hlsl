@@ -1,8 +1,8 @@
 #ifndef NANO_VOLUME_PASS
 #define NANO_VOLUME_PASS
 
-#define MIN_TRANSMITTANCE   0.1
-#define MIN_DENSITY         0.01
+#define MIN_TRANSMITTANCE   0.05
+#define MIN_DENSITY         0.001
 #define CLOUD_COLOR         float3(1, 1, 1)
 
 #define COLOR_NONE          float4(0, 0, 0, 0)
@@ -138,8 +138,8 @@ float volumetric_shadow_2(float3 pos, pnanovdb_readaccessor_t acc)
 	float sigmaS = 0.0;
 	float sigmaE = 0.0;
 
-	float steps = 48;
-    float light_ray_length = 500;
+	float steps = 64;
+    float light_ray_length = 650;
 
 	float step_size = light_ray_length / steps;
 	for (float t = step_size; t < light_ray_length; t += step_size)
@@ -189,13 +189,14 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 		get_participating_media(sigmaS, sigmaE, pos, volume.acc);
 
 		// Skip empty space.
-		uint dim = get_dim_coord(volume.acc, pos);
+		/*uint dim = get_dim_coord(volume.acc, pos);
 		if (dim > 1)
 		{
 			step++;
 			ray.tmin += step_size;
 			continue;
 		}
+		*/
 		if (sigmaS < MIN_DENSITY)
 		{
 			step++;

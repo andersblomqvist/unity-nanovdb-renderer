@@ -107,8 +107,9 @@ float volumetric_shadow(float3 pos, pnanovdb_readaccessor_t acc)
 	float sigmaE = 0.0;
 
 	int step = 0;
+	int steps = 10;
 	float step_size = 1;
-	while (step < _LightSamples)
+	while (step < steps)
 	{
 		float3 sample_pos = pos + step_size * light_dir;
 
@@ -208,7 +209,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 
 		acc_density += sigmaS;
 
-		float3 S = sigmaS * phase_function() * volumetric_shadow_2(pos, volume.acc);
+		float3 S = sigmaS * phase_function() * volumetric_shadow(pos, volume.acc);
 		float3 Sint = (S - S * exp(-sigmaE * step_size)) / sigmaE;
 		direct_light += transmittance * Sint;
 

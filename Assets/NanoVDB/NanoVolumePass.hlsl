@@ -163,95 +163,6 @@ float phase_function()
 	return 1.0;
 }
 
-/**
- * 	Full HDDA traversal
- */
-float4 raymarch_volume_hdda(Ray ray, inout NanoVolume volume)
-{
-	float transmittance  = 1.0;
-	float sigmaS         = 0.0;
-	float sigmaE         = 0.0;
-	float acc_density    = 0.0;
-	float3 direct_light  = 0.0;
-	float3 ambient_light = 0.01;
-
-	float not_used;
-	bool hit = get_hdda_hit(volume.acc, ray, not_used);
-	if (!hit) { return COLOR_NONE; }
-
-	int step = 0;
-	while (hit)
-	{
-		if (ray.tmin >= ray.tmax)
-		{
-			break;
-		}
-
-		float raw_density;
-		hit = get_hdda_hit(volume.acc, ray, raw_density);
-		float3 pos = ray.origin + ray.direction * ray.tmin;
-
-
-		if (!hit)
-		{
-			break;
-		}
-
-		sigmaS = raw_density * _DensityScale;
-		sigmaE = max(0.00001, sigmaS);
-
-		if (sigmaS < MIN_DENSITY)
-		{
-			step++;
-			continue;
-		}
-
-		acc_density += sigmaS;
-
-		// Having step_size as 0.57 here is simply good approximation for the
-		// step size taken by HDDA. It can be caluclated by comparing last hit
-		// with current, but that introduced artifacts, where when step_size
-		// became large.
-		float step_size = 0.57;
-
-		float3 S = sigmaS * phase_function() * volumetric_shadow_2(pos, volume.acc);
-		float3 Sint = (S - S * exp(-sigmaE * step_size)) / sigmaE;
-		direct_light += transmittance * Sint;
-
-		transmittance *= exp(-sigmaE * step_size);
-
-		if (acc_density > 1.0)
-		{
-			break;
-		}
-
-		// Early out if no more light is reaching this point
-		if (transmittance < MIN_TRANSMITTANCE)
-		{
-			transmittance = 0;
-			break;
-		}
-
-		step++;
-	}
-
-	// Low step count will be blue, high red.
-	if (_VisualizeSteps == 1)
-	{
-		float t = float(step) / float(_RayMarchSamples);
-		if (step <= 0)
-		{
-			return COLOR_NONE;
-		}
-		float3 final_color = lerp(COLOR_BLUE, COLOR_RED, t);
-		return float4(final_color, 1);
-	}
-
-	float3 final_color = (direct_light + ambient_light) * acc_density;
-	final_color = pow(final_color, 1.0 / 2.2);
-	return float4(final_color, acc_density);
-}
-
 float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 {
 	float transmittance  = 1.0;
@@ -344,9 +255,8 @@ float4 NanoVolumePass(float3 origin, float3 direction)
 	ray.tmin = _ClipPlaneMin;
 	ray.tmax = _ClipPlaneMax;
 
-	float step_size = 0.57;
-	// float4 final_color = raymarch_volume(ray, volume, step_size);
-	float4 final_color = raymarch_volume_hdda(ray, volume);
+	float step_size = 0.57 * 2;
+	float4 final_color = raymarch_volume(ray, volume, step_size);
 	return final_color;
 }
 

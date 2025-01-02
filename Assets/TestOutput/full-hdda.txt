@@ -1,0 +1,27 @@
+full-hdda
+Render time in MS
+33,3997
+33,2100
+33,3706
+33,3377
+33,3764
+33,3109
+33,3156
+33,3484
+33,3368
+33,3713
+Total avgerage of 33,33773 ms
+RMSE: 0,04763741
+
+Configuration:
+step size			first hit
+max steps			1000
+light steps			64
+light ray length	650
+min transmitt.		0.05
+min density			0.001
+
+Optimizations:
+HDDA first hit
+Full HDDA traversal
+density skip

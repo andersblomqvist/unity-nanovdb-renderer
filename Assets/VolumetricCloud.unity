@@ -1689,8 +1689,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundTruthPath: Assets/TestOutput/ground-truth
-  isGroundTruth: 1
-  testName: ground-truth
+  isGroundTruth: 0
+  testName: full-hdda
 --- !u!114 &485641239
 MonoBehaviour:
   m_ObjectHideFlags: 0

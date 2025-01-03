@@ -171,13 +171,14 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 	float sigmaE         = 0.0;
 	float acc_density    = 0.0;
 	float3 direct_light  = 0.0;
-	float3 ambient_light = 0.01;	
+	float3 ambient_light = 0.01;
 
 	float not_used;
 	bool hit = get_hdda_hit(volume.acc, ray, not_used);
 	if (!hit) { return COLOR_NONE; }
 
 	int step = 0;
+	float skip = 0;
 	while (step < _RayMarchSamples)
 	{
 		if (ray.tmin >= ray.tmax)
@@ -195,13 +196,22 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 		{
 			step++;
 			ray.tmin += 5;
+			skip = 5;
 			continue;
 		}
 		if (sigmaS < MIN_DENSITY)
 		{
 			step++;
 			ray.tmin += 2;
+			skip = 2;
 			continue;
+		}
+
+		if (skip > 0) {
+			// backtrack a little bit
+			ray.tmin -= skip / 2;
+			pos = ray.origin + ray.direction * ray.tmin;
+			skip = 0;
 		}
 
 		acc_density += sigmaS;

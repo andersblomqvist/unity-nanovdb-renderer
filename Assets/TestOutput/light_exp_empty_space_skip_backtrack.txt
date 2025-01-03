@@ -1,0 +1,28 @@
+light_exp_empty_space_skip_backtrack
+Render time in MS
+9,3728
+9,3762
+9,3421
+9,4669
+9,4476
+9,4147
+9,4176
+9,4369
+9,4074
+9,3344
+Total avgerage of 9,401644 ms
+RMSE: 0,04596341
+
+Configuration:
+step size			0.57
+max steps			1000
+light steps			10
+light ray length	exp
+min transmitt.		0.05
+min density			0.001
+
+Optimizations:
+HDDA first hit
+density skip with +2
+dim skip with +5
+backtrack 1/2 skip step

@@ -12,3 +12,16 @@ Render time in MS
 9,0833
 Total avgerage of 9,085886 ms
 RMSE: 0,05354873
+
+Configuration:
+step size			0.57
+max steps			1000
+light steps			10
+light ray length	exp
+min transmitt.		0.05
+min density			0.001
+
+Optimizations:
+HDDA first hit
+density skip with +2
+dim skip with +5

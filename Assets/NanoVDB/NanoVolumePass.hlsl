@@ -129,39 +129,39 @@ float volumetric_shadow(float3 pos, pnanovdb_readaccessor_t acc)
 }
 
 // Step equal over light ray
-float volumetric_shadow_2(float3 pos, pnanovdb_readaccessor_t acc)
+float volumetric_shadow_2(float3 pos, pnanovdb_readaccessor_t acc, float3 view_dir)
 {
 	if (_LightSamples < 1) { return 0; }
 
 	float light_dir = -(_LightDir.xyz);
 
-	float shadow = 1;
+	float shadow = 1.0;
 	float sigmaS = 0.0;
 	float sigmaE = 0.0;
 
-	float steps = 64;
-    float light_ray_length = 650;
+	float step_size = 1.0;
+	float jitter = 0;
 
-	float step_size = light_ray_length / steps;
-	for (float t = step_size; t < light_ray_length; t += step_size)
-    {
-        float3 sample_pos = pos + t * light_dir;
+	int step = 0;
+	int steps = 10;
+	while (step < steps)
+	{
+		float3 sample_pos = pos + (jitter + step_size) * light_dir;
 
-        get_participating_media(sigmaS, sigmaE, sample_pos, acc);
-        shadow *= exp(-sigmaE * step_size);
+		get_participating_media(sigmaS, sigmaE, sample_pos, acc);
+		sigmaE *= 0.3;
+		shadow *= exp(-sigmaE * step_size);
 
-        if (shadow < MIN_TRANSMITTANCE)
-        {
-            shadow = 0;
-            break;
-        }
-    }
+		step++;
+		step_size *= (2 + random_float(sample_pos));
+	}
+	
 	return shadow;
 }
 
 float phase_function()
 {
-	return 1.0;
+	return 1.0;///(4.0*3.14);
 }
 
 float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
@@ -171,7 +171,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 	float sigmaE         = 0.0;
 	float acc_density    = 0.0;
 	float3 direct_light  = 0.0;
-	float3 ambient_light = 0.01;
+	float3 ambient_light = 0.003;
 
 	float not_used;
 	bool hit = get_hdda_hit(volume.acc, ray, not_used);
@@ -218,7 +218,8 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 
 		acc_density += sigmaS;
 
-		float3 S = sigmaS * phase_function() * volumetric_shadow(pos, volume.acc);
+		// float3 S = sigmaS * phase_function() * volumetric_shadow_2(pos, volume.acc);
+		float3 S = sigmaS * phase_function() * volumetric_shadow_2(pos, volume.acc, ray.direction);
 		float3 Sint = (S - S * exp(-sigmaE * step_size)) / sigmaE;
 		direct_light += transmittance * Sint;
 

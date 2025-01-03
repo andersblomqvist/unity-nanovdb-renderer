@@ -10,6 +10,7 @@ Shader "FullScreen/NanoVolumePass"
     // Commons, includes many others
     #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/RenderPass/CustomPass/CustomPassCommon.hlsl"
 
+    #include "Assets/NanoVDB/PseudoRandom.hlsl"
     #include "Assets/NanoVDB/NanoVolumePass.hlsl"
 
     float4 FullScreenPass(Varyings varyings) : SV_Target

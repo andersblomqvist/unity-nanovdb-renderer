@@ -2,7 +2,7 @@
 #define NANO_VOLUME_PASS
 
 #define MIN_TRANSMITTANCE   0.05
-#define MIN_DENSITY         0.005
+#define MIN_DENSITY         0.01
 #define CLOUD_COLOR         float3(1, 1, 1)
 
 #define COLOR_NONE          float4(0, 0, 0, 0)

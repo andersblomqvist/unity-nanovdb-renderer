@@ -195,21 +195,23 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 		if (dim > 1)
 		{
 			step++;
-			ray.tmin += 5;
-			skip = 5;
+			float skip_step = 15;
+			ray.tmin += skip_step;
+			skip = skip_step;
 			continue;
 		}
 		if (sigmaS < MIN_DENSITY)
 		{
 			step++;
-			ray.tmin += 2;
-			skip = 2;
+			float skip_step = 5;
+			ray.tmin += skip_step;
+			skip = skip_step;
 			continue;
 		}
 
 		if (skip > 0) {
 			// backtrack a little bit
-			ray.tmin -= skip / 2;
+			ray.tmin -= skip * 0.8;
 			pos = ray.origin + ray.direction * ray.tmin;
 			skip = 0;
 		}

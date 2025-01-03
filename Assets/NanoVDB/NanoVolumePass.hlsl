@@ -190,20 +190,17 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 		get_participating_media(sigmaS, sigmaE, pos, volume.acc);
 
 		// Skip empty space.
-		/*uint dim = get_dim_coord(volume.acc, pos);
+		uint dim = get_dim_coord(volume.acc, pos);
 		if (dim > 1)
 		{
 			step++;
-			ray.tmin += step_size;
+			ray.tmin += 5;
 			continue;
 		}
-		*/
 		if (sigmaS < MIN_DENSITY)
 		{
 			step++;
-			float not_used;
-			bool hit = get_hdda_hit(volume.acc, ray, not_used);
-			if (!hit) { break; }
+			ray.tmin += 2;
 			continue;
 		}
 

@@ -1,0 +1,14 @@
+light_exp_no_hdda_skip
+Render time in MS
+9,1297
+9,0815
+9,0519
+9,0652
+9,1152
+9,0626
+9,1050
+9,1095
+9,0550
+9,0833
+Total avgerage of 9,085886 ms
+RMSE: 0,05354873

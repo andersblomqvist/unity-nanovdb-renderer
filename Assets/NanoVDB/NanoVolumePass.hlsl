@@ -171,7 +171,7 @@ float4 raymarch_volume(Ray ray, inout NanoVolume volume, float step_size)
 	float sigmaE         = 0.0;
 	float acc_density    = 0.0;
 	float3 direct_light  = 0.0;
-	float3 ambient_light = 0.003;
+	float3 ambient_light = 0.005;
 
 	float not_used;
 	bool hit = get_hdda_hit(volume.acc, ray, not_used);

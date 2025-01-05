@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -108,3 +109,4 @@ public class TestPerformance : MonoBehaviour
 
     }
 }
+#endif

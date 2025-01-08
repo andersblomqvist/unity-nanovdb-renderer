@@ -18,7 +18,7 @@
 
 // platforms
 //#define PNANOVDB_C
-#define PNANOVDB_HLSL
+//#define PNANOVDB_HLSL
 //#define PNANOVDB_GLSL
 
 // addressing mode
@@ -3379,6 +3379,7 @@ PNANOVDB_FORCE_INLINE pnanovdb_bool_t pnanovdb_hdda_zero_crossing(
     return PNANOVDB_FALSE;
 }
 
+// Copied from Sebastian Gaida https://github.com/AcademySoftwareFoundation/openvdb/pull/1600/commits/d4065e52e5a7baaafc5ae2ad3e5f78f5036c5d5c
 PNANOVDB_FORCE_INLINE pnanovdb_bool_t pnanovdb_hdda_tree_marcher(
     pnanovdb_grid_type_t grid_type,
     pnanovdb_buf_t buf,

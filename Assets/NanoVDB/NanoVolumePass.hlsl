@@ -26,10 +26,10 @@ uniform float	_LightAbsorbation;
 uniform float	_ClipPlaneMin;
 uniform float	_ClipPlaneMax;
 
-uniform int		_RayMarchSamples;
-uniform int		_LightSamples;
+uniform int	_RayMarchSamples;
+uniform int	_LightSamples;
 
-uniform int		_VisualizeSteps;
+uniform int	_VisualizeSteps;
 
 struct Ray
 {
@@ -128,7 +128,7 @@ float volumetric_shadow(float3 pos, pnanovdb_readaccessor_t acc)
 	return shadow;
 }
 
-// Step equal over light ray
+// Exp step with jitter
 float volumetric_shadow_2(float3 pos, pnanovdb_readaccessor_t acc, float3 view_dir)
 {
 	if (_LightSamples < 1) { return 0; }

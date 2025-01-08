@@ -1,7 +1,7 @@
 # Unity NanoVDB Volume Renderer
 
 ![wdas_final_render](./final-result.png)
-*Screenshot for my final render at 6 ms of the WDAS cloud dataset. Tested on RTX 3080 at stock clock speeds.*
+*Screenshot for my final render at 1920x1080 in 6 ms of the WDAS cloud dataset. Tested on RTX 3080 at stock clock speeds.*
 
 
 I made this project as part of the [DD2470 Advanced Topics in Visualization and Computer Graphics](https://www.kth.se/student/kurser/kurs/DD2470?l=en) course at KTH during end of 2024. My aim for the project was to render the [Disney Moana cloud](https://disneyanimation.com/resources/clouds/) (half resolution), at acceptable real-time frame rates, while keeping visual degradation low.
